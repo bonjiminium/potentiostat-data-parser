@@ -14,13 +14,6 @@ Install latest from the GitHub
 $ pip install git+https://github.com/bxw315-umd/potentiostat-data-parser.git
 ```
 
-or from
-[conda](https://anaconda.org/bxw315-umd/potentiostat-data-parser)
-
-``` sh
-$ conda install -c bxw315-umd potentiostat_data_parser
-```
-
 or from [pypi](https://pypi.org/project/potentiostat-data-parser/)
 
 ``` sh

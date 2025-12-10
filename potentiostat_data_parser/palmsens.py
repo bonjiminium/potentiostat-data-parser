@@ -38,8 +38,9 @@ def validate_cols(ps_fifth_line: str) -> bool: # True if the file has the expect
 def organize_column_data(
     ps_data_lines: list[str] # usually lines[6:-1] of a palmsens .csv file
 ) -> np.ndarray: # numpy array with shape (N, 2, L) where N is the number of columns, the second axis is [potential, current], and L is length of measurement
-    step1 = np.array([line.split(",") for line in ps_data_lines], dtype=float).T # first, lets transpose it. so now it's rows of V1, uA1, V2, uA2, V3, uA3, ...
-    step2 = step1.reshape(step1.shape[0]//2, 2, -1)
+    step1 = np.array([line.split(",") for line in ps_data_lines]).T # first, lets transpose it. so now it's rows of V1, uA1, V2, uA2, V3, uA3, ...
+    step1_clean = np.where(step1 == '', 'nan', step1).astype(float) # to handle different shapes -> cells with ''
+    step2 = step1_clean.reshape(step1_clean.shape[0]//2, 2, -1)
     return step2
 
 def retrieve_data(
@@ -47,9 +48,10 @@ def retrieve_data(
     organized_data: np.ndarray # output of `organize_column_data`
 ) -> dict[str, np.ndarray]: # a dict with potential (in volts) and current (in A)
     col_data = organized_data[col_index]
+    mask = ~(np.isnan(col_data[0]) | np.isnan(col_data[1]))
     return {
-        "potential": col_data[0],
-        "current": col_data[1]*1e-6
+        "potential": col_data[0][mask],
+        "current": col_data[1][mask]*1e-6
     }
 
 # %% ../nbs/01_palmsens.ipynb 27
